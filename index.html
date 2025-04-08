@@ -37,16 +37,69 @@
       display: block;
       opacity: 1;
     }
+
+    /* Estilo de los enlaces con imágenes */
+    .buttons-container {
+      position: absolute;
+      bottom: 20px; /* Ajustar el margen desde el fondo */
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px; /* Espacio más pequeño entre los botones */
+      opacity: 0;
+      transition: opacity 1s ease;
+      z-index: 3;
+    }
+
+    .button-img {
+      width: 120px; /* Ajustar el tamaño de la imagen */
+      height: auto;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Cambiar la opacidad al pasar el ratón sobre la imagen */
+    .button-img:hover {
+      opacity: 0.8;
+    }
+
+    /* Ocultar los controles del audio y video */
+    #audio, #pagina2 {
+      display: none;
+    }
   </style>
 </head>
 <body>
    
   <video id="video" src="assets/video.mp4" playsinline muted></video>
-  <img src="assets/pagina2.jpeg" id="pagina2" alt="Imagen final" />
+  <!-- Segundo video que se repetirá en bucle después del primero -->
+  <video id="pagina2" loop muted autoplay>
+    <source src="assets/second_video.mp4" type="video/mp4" />
+    Tu navegador no soporta el formato de video.
+  </video>
+
+  <!-- Agregar música de fondo -->
+  <audio id="audio" loop>
+    <source src="assets/music.mp3" type="audio/mpeg" />
+    Tu navegador no soporta el formato de audio.
+  </audio>
+
+  <!-- Botones con imágenes -->
+  <div class="buttons-container" id="buttons-container">
+    <!-- Reemplazar las rutas de las imágenes con tus imágenes PNG -->
+    <a href="https://www.google.com/maps" target="_blank">
+      <img src="assets/salon.png" alt="Ubicación Salón" class="button-img" />
+    </a>
+    <a href="https://wa.me/your-whatsapp-number" target="_blank">
+      <img src="assets/ceremonia.png" alt="Confirmar Asistencia" class="button-img" />
+    </a>
+  </div>
 
   <script>
     const video = document.getElementById("video");
     const pagina2 = document.getElementById("pagina2");
+    const audio = document.getElementById("audio");
+    const buttonsContainer = document.getElementById("buttons-container");
 
     // Mostrar video como imagen de portada al cargar (en pausa, sin controles)
     video.addEventListener("loadeddata", () => {
@@ -54,18 +107,21 @@
       video.pause(); // Luego pausamos para quedar como imagen estática
     });
 
-    // Al hacer click, reproducir el video
+    // Al hacer click, reproducir el video y la música de fondo
     video.addEventListener("click", () => {
-      video.muted = false; // Habilita el sonido
+      video.muted = false; // Habilita el sonido del video
       video.play();
+      audio.play(); // Inicia la música de fondo
     });
 
-    // Al terminar, desvanecer el video y mostrar la imagen
+    // Al terminar el primer video, desvanecerlo, mostrar el segundo video y continuar la música
     video.addEventListener("ended", () => {
       video.style.opacity = "0";
       setTimeout(() => {
         video.style.display = "none";
-        pagina2.classList.add("visible");
+        pagina2.classList.add("visible"); // Muestra el segundo video
+        audio.play(); // Continúa la música de fondo
+        buttonsContainer.style.opacity = "1"; // Muestra los botones
       }, 1000); // coincide con el tiempo de transición
     });
 
