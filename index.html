@@ -9,7 +9,13 @@
   <title>Intro Interactiva</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: black; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+      font-family: sans-serif;
+    }
 
     #video, #pagina2 {
       position: absolute;
@@ -38,61 +44,186 @@
       opacity: 1;
     }
 
-    /* Estilo de los enlaces con imágenes */
     .buttons-container {
       position: absolute;
-      bottom: 20px; /* Ajustar el margen desde el fondo */
-      left: 50%;
-      transform: translateX(-50%);
+      bottom: 20px;
+      left: 0;
+      right: 0;
       display: flex;
-      gap: 15px; /* Espacio más pequeño entre los botones */
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
       opacity: 0;
       transition: opacity 1s ease;
       z-index: 3;
+      padding: 0 20px;
+      overflow-x: auto;
+    }
+
+    .buttons-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .button-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex-shrink: 0;
     }
 
     .button-img {
-      width: 120px; /* Ajustar el tamaño de la imagen */
+      width: 60px;
       height: auto;
       cursor: pointer;
       transition: opacity 0.3s ease;
     }
 
-    /* Cambiar la opacidad al pasar el ratón sobre la imagen */
     .button-img:hover {
       opacity: 0.8;
     }
 
-    /* Ocultar los controles del audio y video */
     #audio, #pagina2 {
       display: none;
     }
+
+    /* MODALS */
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 4;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+
+    .modal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-content {
+      position: relative;
+      animation: fadeInZoom 0.4s ease;
+    }
+
+    @keyframes fadeInZoom {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-content img {
+      max-width: 90vw;
+      max-height: 80vh;
+      border-radius: 12px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: -10px;
+      right: -10px;
+      background: white;
+      color: black;
+      font-size: 18px;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 0 10px black;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 480px) {
+      .button-img {
+        width: 40px;
+      }
+    }
+
+    @media (min-width: 481px) and (max-width: 768px) {
+      .button-img {
+        width: 55px;
+      }
+    }
+
+    @media (min-width: 769px) {
+      .button-img {
+        width: 60px;
+      }
+    }
   </style>
 </head>
-<body>
-   
-  <video id="video" src="assets/video.mp4" playsinline muted></video>
-  <!-- Segundo video que se repetirá en bucle después del primero -->
-  <video id="pagina2" loop muted autoplay>
+<body oncontextmenu="return false">
+
+  <!-- VIDEO PRINCIPAL -->
+  <video id="video" src="assets/video.mp4" playsinline muted controlsList="nodownload"></video>
+
+  <!-- VIDEO DE FONDO (PÁGINA 2) -->
+  <video id="pagina2" loop muted autoplay controlsList="nodownload">
     <source src="assets/second_video.mp4" type="video/mp4" />
     Tu navegador no soporta el formato de video.
   </video>
 
-  <!-- Agregar música de fondo -->
+  <!-- AUDIO -->
   <audio id="audio" loop>
     <source src="assets/music.mp3" type="audio/mpeg" />
     Tu navegador no soporta el formato de audio.
   </audio>
 
-  <!-- Botones con imágenes -->
+  <!-- BOTONES -->
   <div class="buttons-container" id="buttons-container">
-    <!-- Reemplazar las rutas de las imágenes con tus imágenes PNG -->
-    <a href="https://www.google.com/maps" target="_blank">
-      <img src="assets/salon.png" alt="Ubicación Salón" class="button-img" />
-    </a>
-    <a href="https://wa.me/your-whatsapp-number" target="_blank">
-      <img src="assets/ceremonia.png" alt="Confirmar Asistencia" class="button-img" />
-    </a>
+    <div class="button-wrapper">
+      <a href="https://www.google.com/maps" target="_blank">
+        <img src="assets/salon.png" alt="Salón" class="button-img" />
+      </a>
+    </div>
+    <div class="button-wrapper">
+      <a href="https://wa.me/your-whatsapp-number" target="_blank">
+        <img src="assets/ceremonia.png" alt="Ceremonia" class="button-img" />
+      </a>
+    </div>
+    <div class="button-wrapper">
+      <img src="assets/confirmacion.png" alt="Confirmación" class="button-img" onclick="openModal('modal-confirmacion')" />
+    </div>
+    <div class="button-wrapper">
+      <img src="assets/gracias.png" alt="Gracias" class="button-img" onclick="openModal('modal-gracias')" />
+    </div>
+    <div class="button-wrapper">
+      <img src="assets/cartelera.png" alt="Cartelera" class="button-img" onclick="openModal('modal-cartelera')" />
+    </div>
+  </div>
+
+  <!-- MODAL CONFIRMACIÓN -->
+  <div class="modal" id="modal-confirmacion">
+    <div class="modal-content">
+      <div class="close-btn" onclick="closeModal('modal-confirmacion')">×</div>
+      <img src="assets/confirmacion-popup.png" alt="Confirmación">
+    </div>
+  </div>
+
+  <!-- MODAL GRACIAS -->
+  <div class="modal" id="modal-gracias">
+    <div class="modal-content">
+      <div class="close-btn" onclick="closeModal('modal-gracias')">×</div>
+      <img src="assets/gracias-popup.png" alt="Gracias">
+    </div>
+  </div>
+
+  <!-- MODAL CARTELERA -->
+  <div class="modal" id="modal-cartelera">
+    <div class="modal-content">
+      <div class="close-btn" onclick="closeModal('modal-cartelera')">×</div>
+      <img src="assets/cartelera-popup.png" alt="Cartelera">
+    </div>
   </div>
 
   <script>
@@ -101,31 +232,37 @@
     const audio = document.getElementById("audio");
     const buttonsContainer = document.getElementById("buttons-container");
 
-    // Mostrar video como imagen de portada al cargar (en pausa, sin controles)
     video.addEventListener("loadeddata", () => {
-      video.play(); // Autoplay silencioso para mostrar de fondo (muted)
-      video.pause(); // Luego pausamos para quedar como imagen estática
-    });
-
-    // Al hacer click, reproducir el video y la música de fondo
-    video.addEventListener("click", () => {
-      video.muted = false; // Habilita el sonido del video
       video.play();
-      audio.play(); // Inicia la música de fondo
+      video.pause();
     });
 
-    // Al terminar el primer video, desvanecerlo, mostrar el segundo video y continuar la música
+    video.addEventListener("click", () => {
+      video.muted = false;
+      video.play();
+      audio.play();
+    });
+
     video.addEventListener("ended", () => {
       video.style.opacity = "0";
       setTimeout(() => {
         video.style.display = "none";
-        pagina2.classList.add("visible"); // Muestra el segundo video
-        audio.play(); // Continúa la música de fondo
-        buttonsContainer.style.opacity = "1"; // Muestra los botones
-      }, 1000); // coincide con el tiempo de transición
+        pagina2.classList.add("visible");
+        audio.play();
+        buttonsContainer.style.opacity = "1";
+      }, 1000);
     });
 
-    // PWA manifest y SW inline opcionales
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Prevenir clic derecho / mantener presionado
+    document.addEventListener('contextmenu', event => event.preventDefault());
   </script>
 
 </body>
